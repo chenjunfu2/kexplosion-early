@@ -15,19 +15,9 @@
 	"icon": "assets/kexplosion/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			"chenjunfu2.kexplosion.Kexplosion"
-		],
-		"client": [
-			"chenjunfu2.kexplosion.KexplosionClient"
-		]
 	},
 	"mixins": [
-		"kexplosion.mixins.json",
-		{
-			"config": "kexplosion.client.mixins.json",
-			"environment": "client"
-		}
+		"kexplosion.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.24",
