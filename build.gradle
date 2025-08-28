@@ -24,7 +24,6 @@ loom {
 	mods {
 		"kexplosion" {
 			sourceSet sourceSets.main
-			sourceSet sourceSets.client
 		}
 	}
 
