@@ -1,6 +1,8 @@
 package chenjunfu2.kexplosion.mixin;
 
 import chenjunfu2.kexplosion.test.KExplosionTest;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -10,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.world.explosion.Explosion;
 
 @Mixin(Explosion.class)
@@ -20,7 +21,17 @@ public class ExplosionMixin
 	@Shadow @Final private @Nullable Entity entity;
 	@Shadow @Final private Explosion.DestructionType destructionType;
 	
-	@Redirect(
+	@Unique
+	private boolean preservesDecorativeEntities()//这里判断是否保留装饰实体，通过判断导致爆炸的实体在不在水中来决定
+	{
+		//游戏规则同样影响是否能炸掉实体，如果是苦力怕之类的生物并且DO_MOB_GRIEFING为false，那么哪怕不在水中也不会炸掉实体
+		boolean bl = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
+		boolean bl2 = this.entity == null || !this.entity.isTouchingWater();
+		return bl ? bl2 : this.destructionType != Explosion.DestructionType.KEEP && bl2;
+	}
+	
+	@WrapOperation
+	(
 		method = "collectBlocksAndDamageEntities()V",
 		at = @At
 		(
@@ -28,7 +39,7 @@ public class ExplosionMixin
 			target = "Lnet/minecraft/entity/Entity;isImmuneToExplosion()Z"
 		)
 	)
-	public boolean redirectIsImmuneToExplosion(Entity targetEntity)
+	public boolean redirectIsImmuneToExplosion(Entity targetEntity, Operation<Boolean> original)
 	{
 		// 返回 true → 跳过伤害（相当于原版 isImmuneToExplosion() 返回 true）
 		// 返回 false → 允许伤害（相当于原版 isImmuneToExplosion() 返回 false）
@@ -40,20 +51,11 @@ public class ExplosionMixin
 		//如果实体符合要求则判断爆炸实体
 		if (targetEntity instanceof KExplosionTest)//因为其他mixin给目标类添加了KExplosionTest，所以只需要判断这个即可
 		{//是的话则走K爆判断
-			return preservesDecorativeEntities() ? targetEntity.isImmuneToExplosion() : true;
+			return preservesDecorativeEntities() ? original.call(targetEntity) : true;
 		}
 		else
 		{//否则按原始判断
-			return targetEntity.isImmuneToExplosion();
+			return original.call(targetEntity);
 		}
-	}
-	
-	@Unique
-	private boolean preservesDecorativeEntities()//这里判断是否保留装饰实体，通过判断导致爆炸的实体在不在水中来决定
-	{
-		//游戏规则同样影响是否能炸掉实体，如果是苦力怕之类的生物并且DO_MOB_GRIEFING为false，那么哪怕不在水中也不会炸掉实体
-		boolean bl = this.world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
-		boolean bl2 = this.entity == null || !this.entity.isTouchingWater();
-		return bl ? bl2 : this.destructionType != Explosion.DestructionType.KEEP && bl2;
 	}
 }
