@@ -1,9 +1,7 @@
 package chenjunfu2.kexplosion.mixin;
 
+import chenjunfu2.kexplosion.test.KExplosionTest;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -39,12 +37,8 @@ public class ExplosionMixin
 		//因为低版本redirectIsImmuneToExplosion不会传入this，所以无法通过mixin需要的实体来调用preservesDecorativeEntities
 		//在这里直接判断targetEntity的类型
 		
-		if//如果实体符合要求则判断爆炸实体
-		(
-			targetEntity instanceof ItemEntity ||
-			targetEntity instanceof ArmorStandEntity ||
-			targetEntity instanceof AbstractDecorationEntity
-		)
+		//如果实体符合要求则判断爆炸实体
+		if (targetEntity instanceof KExplosionTest)//因为其他mixin给目标类添加了KExplosionTest，所以只需要判断这个即可
 		{//是的话则走K爆判断
 			return preservesDecorativeEntities() ? targetEntity.isImmuneToExplosion() : true;
 		}

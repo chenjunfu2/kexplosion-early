@@ -3,7 +3,10 @@
   "package": "chenjunfu2.kexplosion.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ExplosionMixin"
+    "AbstractDecorationEntityMixin",
+    "ArmorStandEntityMixin",
+    "ExplosionMixin",
+    "ItemEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
