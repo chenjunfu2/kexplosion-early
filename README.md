@@ -11,5 +11,5 @@ MCJE 1.21.2-1.21.5 存在的K爆特性移植：
 **说明：**“水爆”功能在社区中俗称“K爆”，以发现者用户`K____D`命名。  
 
 # 注意
-该Mod的功能与 `Carpet Mod` 规则 `optimizedTNT` 冲突，  
-如果Mod未按照预期工作，请关闭 `optimizedTNT` 规则。  
+该mod的功能与 `carpet mod` 规则 `optimizedTNT` 冲突，  
+如果该mod未按照预期工作，请关闭 `carpet mod` 中的 `optimizedTNT` 规则。  
